@@ -1,0 +1,13 @@
+.loader {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+}
+
+.EPDivider {
+  border-top: 1px solid rgb(233, 235, 237);
+  margin-top: 16px;
+  padding-top: 16px;
+}
