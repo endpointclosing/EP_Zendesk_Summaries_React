@@ -54,3 +54,7 @@ export function escapeSpecialChars (str) {
 
   return str.replace(/[&<>"'`=]/g, function (m) { return escape[m] })
 }
+
+export function generateCustomTicketKey (str) {
+  return ('ticket.customField:custom_field_' + str)
+}

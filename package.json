@@ -67,9 +67,13 @@
     "@zendeskgarden/react-tooltips": "^8.62.0",
     "@zendeskgarden/react-typography": "^8.62.0",
     "@zendeskgarden/svg-icons": "^7.1.1",
+    "markdown-to-jsx": "^7.4.7",
     "node-gyp": "^9.3.0",
     "react": "^16.8.0",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^16.8.0",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "svg-inline-loader": "^0.8.2",
+    "svg-url-loader": "^8.0.0"
   }
 }
