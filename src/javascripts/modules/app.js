@@ -60,8 +60,8 @@ class App {
     // Pulling each field for less writing in JSX later
     const bulletPoints = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
     const actionItems = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : ""
-    const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
-    const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
+    const oneSentenceSummary = "hello, this is an example of a sentence that could be in this spot"//ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
+    const clientSentiment = "positive" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
     const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : ""
     const lastUpdatedTimeStamp = ticketAPIResponse ? ticketAPIResponse['ticket.createdAt'] : ""
 
@@ -77,7 +77,7 @@ class App {
         <Grid>
           <Row>
           <Col>
-              <SummaryItem title="One Sentence Summary" content={oneSentenceSummary} variant="one-sentence-summary"/>
+              <SummaryItem title="One Sentence Summary" content={oneSentenceSummary} sentiment={clientSentiment} variant="one-sentence-summary"/>
               <div className="EPDivider"></div>
             </Col>
           </Row>

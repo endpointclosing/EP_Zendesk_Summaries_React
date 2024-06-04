@@ -1,11 +1,12 @@
 import React from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { CopyIconStroke, CopyIconFill, ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
+import { CopyIconStroke, CopyIconFill } from '../lib/icons'
 import { OrderedList, Span, UnorderedList, XXL } from '@zendeskgarden/react-typography'
 import { useState } from 'react'
 import { Button, Anchor } from '@zendeskgarden/react-buttons'
-import { Title, Paragraph } from "@zendeskgarden/react-notifications"
+import { Title } from "@zendeskgarden/react-notifications"
 import { Skeleton } from '@zendeskgarden/react-loaders'
+import SentimentTag from './SentimentTag'
 import ReactMarkdown from 'react-markdown'
 import removeMarkdown from 'remove-markdown'
 
@@ -15,6 +16,13 @@ const SummaryItem = (props) => {
   const strippedText = removeMarkdown(props.content, {
     listUnicodeChar: '-'
   })
+
+  const indicateCopied = () => {
+    if (!isCopied) setIsCopied(true)
+    setTimeout(function(){
+      setIsCopied(false)
+    },2000);
+  }
   // When using the ReactMarkdown library be aware that we are using the Zendesk Garden Design system which does not map well onto it
   // Currently only bold, italics (which are turned bold), and ul/ol are supported. 
   return <>
@@ -29,16 +37,17 @@ const SummaryItem = (props) => {
       }}></ReactMarkdown> : 
       <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL>
     }
+    { props.sentiment ? <><br/><SentimentTag variant={props.sentiment}/><br/></> : <></> }
     <br/>
     <CopyToClipboard text={strippedText}>
       { isCopied ? 
-        <Button isSelected isStretched size="small" isBasic>
+        <Button isStretched size="small">
           <Button.StartIcon>
             {CopyIconFill}
           </Button.StartIcon>
           Copied!
         </Button> :
-        <Button isStretched size="small" isBasic onClick={()=>{setIsCopied(true)}}>
+        <Button isStretched size="small" isBasic onClick={()=>indicateCopied()}>
           <Button.StartIcon>
             {CopyIconStroke}
           </Button.StartIcon>
