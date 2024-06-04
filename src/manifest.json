@@ -1,5 +1,5 @@
 {
-  "name": "EP Zendesk Summaries",
+  "name": "EP Summaries",
   "author": {
     "name": "Matthew Lim",
     "email": "mlim@endpoint.com"
@@ -14,6 +14,38 @@
       }
     }
   },
+  "parameters": [
+    {
+      "name": "Client Sentiment Field ID",
+      "type": "number",
+      "required": true,
+      "default": 27081365391508 
+    },
+    {
+      "name": "One Sentence Summary Field ID",
+      "type": "number",
+      "required": true,
+      "default": 27081359103380
+    },
+    {
+      "name": "Bullet Point Summary Field ID",
+      "type": "number",
+      "required": true,
+      "default": 27081393965076
+    },
+    {
+      "name": "Action Items Field ID",
+      "type": "number",
+      "required": true,
+      "default": 27081419354260
+    },
+    {
+      "name": "AI Feedback Field ID",
+      "type": "number",
+      "required": true,
+      "default": 27081431860756
+    }
+  ],
   "version": "1.0",
   "frameworkVersion": "2.0"
 }

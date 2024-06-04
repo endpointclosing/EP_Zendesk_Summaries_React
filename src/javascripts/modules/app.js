@@ -8,14 +8,11 @@ import { Grid, Row, Col } from '@zendeskgarden/react-grid'
 import { Title, Paragraph } from "@zendeskgarden/react-notifications"
 import { Tag } from '@zendeskgarden/react-tags'
 import I18n from '../../javascripts/lib/i18n'
-import { Skeleton } from '@zendeskgarden/react-loaders'
 import { resizeContainer } from '../../javascripts/lib/helpers'
-import { IconButton, Button } from '@zendeskgarden/react-buttons'
-import { SM, XXL } from '@zendeskgarden/react-typography'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { CopyIconStroke, CopyIconFill, ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
-import { Tooltip } from '@zendeskgarden/react-tooltips'
-import { useState } from 'react'
+import { IconButton } from '@zendeskgarden/react-buttons'
+import { SM } from '@zendeskgarden/react-typography'
+import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
+import SummaryItem from './SummaryItem'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
@@ -39,31 +36,6 @@ const ticketDataFields = [
   TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'],
 ]
 
-const SummaryItem = (props) => {
-  const [isCopied, setIsCopied] = useState(false)
-  return <>
-    <Title>{props.title}</Title>
-    {props.content ? <Paragraph>{ props.content }</Paragraph> : <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL>}
-    <br/>
-    <CopyToClipboard text={props.content}>
-      { isCopied ? 
-        <Button isSelected isStretched size="small" isBasic>
-          <Button.StartIcon>
-            {CopyIconFill}
-          </Button.StartIcon>
-          Copied!
-        </Button> :
-        <Button isStretched size="small" isBasic onClick={()=>{setIsCopied(true)}}>
-          <Button.StartIcon>
-            {CopyIconStroke}
-          </Button.StartIcon>
-          Copy
-        </Button> 
-      }
-    </CopyToClipboard>
-  </>;
-}
-
 class App {
   constructor (client, _appData) {
     this._client = client
@@ -82,9 +54,10 @@ class App {
 
     // Query various AI assistant generated fields
     const ticketAPIResponse = await this._client.get(ticketDataFields).catch(this._handleError.bind(this))
+    console.log(ticketAPIResponse)
 
     // Pulling each field for less writing in JSX later
-    const bulletPoints = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
+    const bulletPoints = `* Hello, *world*! \n * How are you [Duck Duck Go](https://duckduckgo.com)` //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
     const actionItems = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : ""
     const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
     const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
