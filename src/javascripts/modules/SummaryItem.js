@@ -7,9 +7,14 @@ import { Button, Anchor } from '@zendeskgarden/react-buttons'
 import { Title, Paragraph } from "@zendeskgarden/react-notifications"
 import { Skeleton } from '@zendeskgarden/react-loaders'
 import ReactMarkdown from 'react-markdown'
+import removeMarkdown from 'remove-markdown'
+
 
 const SummaryItem = (props) => {
   const [isCopied, setIsCopied] = useState(false)
+  const strippedText = removeMarkdown(props.content, {
+    listUnicodeChar: '-'
+  })
   // When using the ReactMarkdown library be aware that we are using the Zendesk Garden Design system which does not map well onto it
   // Currently only bold, italics (which are turned bold), and ul/ol are supported. 
   return <>
@@ -25,7 +30,7 @@ const SummaryItem = (props) => {
       <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL>
     }
     <br/>
-    <CopyToClipboard text={props.content}>
+    <CopyToClipboard text={strippedText}>
       { isCopied ? 
         <Button isSelected isStretched size="small" isBasic>
           <Button.StartIcon>
