@@ -28,7 +28,7 @@
       "default": 27081359103380
     },
     {
-      "name": "Bullet Point Summary Field ID",
+      "name": "Bullet Points Summary Field ID",
       "type": "number",
       "required": true,
       "default": 27081393965076

@@ -17,25 +17,6 @@ import SummaryItem from './SummaryItem'
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
 
-// These need to be replaced with the customFieldIds of ai_assistant values of the production level the app is being deployed
-const EndpointFieldIds = {
-  one_sentence_summary: '27081359103380',
-  client_sentiment: '27081365391508',
-  bullet_points: '27081393965076',
-  action_items: '27081419354260',
-  ai_feedback: '27081431860756',
-}
-
-// These need to be replaced with the customFieldIds of ai_assistant values of the production level the app is being deployed
-const ticketDataFields = [
-  'ticket.createdAt',
-  TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary'],
-  TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment'],
-  TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points'],
-  TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items'],
-  TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'],
-]
-
 class App {
   constructor (client, _appData) {
     this._client = client
@@ -43,6 +24,7 @@ class App {
     // indicate app initilization(including all async operations) is complete
     this.initializePromise = this.init()
   }
+
 
   /**
    * Initialize module, render main template
@@ -52,12 +34,31 @@ class App {
     const currentUser = (await this._client.get('currentUser')).currentUser
     I18n.loadTranslations(currentUser.locale)
 
+    // Get metadata
+    const appMetadata = await this._client.metadata().catch(this._handleError.bind(this))
+    const EndpointFieldIds = {
+      'one_sentence_summary': appMetadata.settings['One Sentence Summary Field ID'],
+      'client_sentiment': appMetadata.settings['Client Sentiment Field ID'],
+      'bullet_points': appMetadata.settings['Bullet Points Summary Field ID'],
+      'action_items': appMetadata.settings['Action Items Field ID'],
+      'ai_feedback': appMetadata.settings['AI Feedback Field ID']
+    }
+
+    // List all of the initial get queries we are going to make
+    const ticketDataFields = [
+      'ticket.createdAt',
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary'],
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment'],
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points'],
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items'],
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], 
+    ]
+
     // Query various AI assistant generated fields
     const ticketAPIResponse = await this._client.get(ticketDataFields).catch(this._handleError.bind(this))
-    console.log(ticketAPIResponse)
 
     // Pulling each field for less writing in JSX later
-    const bulletPoints = `* Hello, *world*! \n * How are you [Duck Duck Go](https://duckduckgo.com)` //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
+    const bulletPoints = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
     const actionItems = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : ""
     const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
     const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
@@ -75,8 +76,8 @@ class App {
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
         <Grid>
           <Row>
-            <Col>
-              <SummaryItem title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
+          <Col>
+              <SummaryItem title="One Sentence Summary" content={oneSentenceSummary} variant="one-sentence-summary"/>
               <div className="EPDivider"></div>
             </Col>
           </Row>
@@ -87,8 +88,8 @@ class App {
             </Col>
           </Row>
           <Row>
-            <Col>
-              <SummaryItem title="One Sentence Summary" content={oneSentenceSummary} variant="one-sentence-summary"/>
+          <Col>
+              <SummaryItem title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
               <div className="EPDivider"></div>
             </Col>
           </Row>
