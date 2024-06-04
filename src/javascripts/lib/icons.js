@@ -1,7 +1,14 @@
 import React from 'react'
 // For some reason, this webpack refuses to move node module SVGs into the dist folder. For now just defining svgs inline. 
-export const CopyIcon = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">
+export const CopyIconStroke = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">
   <path fill="currentColor" d="M11 4a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1h6zm0 1H5v6h6V5zM7 0a1 1 0 011 1v1.5a.5.5 0 01-1 0V1H1v6h1.5a.5.5 0 010 1H1a1 1 0 01-1-1V1a1 1 0 011-1h6z"/>
+</svg>
+
+export const CopyIconFill = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">
+<g fill="currentColor">
+  <path d="M4 3h3.5a.5.5 0 00.5-.5V1a1 1 0 00-1-1H1a1 1 0 00-1 1v6a1 1 0 001 1h1.5a.5.5 0 00.5-.5V4a1 1 0 011-1z"/>
+  <rect width="8" height="8" x="4" y="4" rx="1" ry="1"/>
+</g>
 </svg>
 
 export const ThumbsDownIcon = <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" focusable="false" viewBox="0 0 12 12">

@@ -13,8 +13,9 @@ import { resizeContainer } from '../../javascripts/lib/helpers'
 import { IconButton, Button } from '@zendeskgarden/react-buttons'
 import { SM, XXL } from '@zendeskgarden/react-typography'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { CopyIcon, ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
-
+import { CopyIconStroke, CopyIconFill, ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
+import { Tooltip } from '@zendeskgarden/react-tooltips'
+import { useState } from 'react'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
@@ -37,6 +38,31 @@ const ticketDataFields = [
   TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items'],
   TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'],
 ]
+
+const SummaryItem = (props) => {
+  const [isCopied, setIsCopied] = useState(false)
+  return <>
+    <Title>{props.title}</Title>
+    {props.content ? <Paragraph>{ props.content }</Paragraph> : <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL>}
+    <br/>
+    <CopyToClipboard text={props.content}>
+      { isCopied ? 
+        <Button isSelected isStretched size="small" isBasic>
+          <Button.StartIcon>
+            {CopyIconFill}
+          </Button.StartIcon>
+          Copied!
+        </Button> :
+        <Button isStretched size="small" isBasic onClick={()=>{setIsCopied(true)}}>
+          <Button.StartIcon>
+            {CopyIconStroke}
+          </Button.StartIcon>
+          Copy
+        </Button> 
+      }
+    </CopyToClipboard>
+  </>;
+}
 
 class App {
   constructor (client, _appData) {
@@ -69,8 +95,7 @@ class App {
 
     // Define query for setting feedback
     const setFeedback = (feedback) => {
-      if (feedback == aiFeedback)
-      this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback).catch(this._handleError.bind(this));
+      if (feedback != aiFeedback) this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback)
     }
 
     render(
@@ -78,57 +103,30 @@ class App {
         <Grid>
           <Row>
             <Col>
-            <Title>Bullet Points</Title>
-            {bulletPoints ? <Paragraph>{ bulletPoints }</Paragraph> : <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL>}
-            <CopyToClipboard text={bulletPoints}>
-              <Button isStretched size="small" isBasic>
-                <Button.StartIcon>
-                  {CopyIcon}
-                </Button.StartIcon>
-                Copy
-              </Button>
-            </CopyToClipboard>
-            <div className="EPDivider"></div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Title>Action Items</Title>
-              {actionItems ? actionItems : <XXL><Skeleton height="24px"/><Skeleton width="95%" height="24px"/><Skeleton width="90%" height="24px"/></XXL>}
-              <CopyToClipboard text={actionItems}>
-                <Button isStretched size="small" isBasic>
-                  <Button.StartIcon>
-                    {CopyIcon}
-                  </Button.StartIcon>
-                Copy
-                </Button>
-              </CopyToClipboard>
+              <SummaryItem title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
               <div className="EPDivider"></div>
             </Col>
           </Row>
           <Row>
             <Col>
-            <Title className="EP">Quick Summary</Title>
-              { oneSentenceSummary ? <Paragraph>{ oneSentenceSummary }</Paragraph> : <XXL><Skeleton height="48px"/></XXL> }
-              <CopyToClipboard text={oneSentenceSummary}>
-                <Button isStretched size="small" isBasic>
-                  <Button.StartIcon>
-                    { CopyIcon }
-                  </Button.StartIcon>
-                Copy
-                </Button>
-              </CopyToClipboard>
+              <SummaryItem title="Action Items" content={actionItems} variant="action-items"/>
+              <div className="EPDivider"></div>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <SummaryItem title="One Sentence Summary" content={oneSentenceSummary} variant="one-sentence-summary"/>
               <div className="EPDivider"></div>
             </Col>
           </Row>
           <Row style={{marginBottom: 16}}>
             <Col>
               { aiFeedback == "positive" ? 
-              <IconButton isPrimary size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => setFeedback("positive")}>{ThumbsUpIcon}</IconButton> :
+              <IconButton isSelected size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => setFeedback("positive")}>{ThumbsUpIcon}</IconButton> :
               <IconButton size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => setFeedback("positive")}>{ThumbsUpIcon}</IconButton>
               }
               { aiFeedback == "negative" ? 
-              <IconButton isPrimary size="small" isBasic={false} isPill={false} onClick={() => setFeedback("negative")}>{ThumbsDownIcon}</IconButton> :
+              <IconButton isSelected size="small" isBasic={false} isPill={false} onClick={() => setFeedback("negative")}>{ThumbsDownIcon}</IconButton> :
               <IconButton size="small" isBasic={false} isPill={false} onClick={() => setFeedback("negative")}>{ThumbsDownIcon}</IconButton>
               }
             </Col>
