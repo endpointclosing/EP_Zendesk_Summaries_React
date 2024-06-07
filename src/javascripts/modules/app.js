@@ -5,17 +5,20 @@ import React from 'react'
 import { render } from 'react-dom'
 import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming'
 import { Grid, Row, Col } from '@zendeskgarden/react-grid'
-import { Title, Paragraph } from "@zendeskgarden/react-notifications"
-import { Tag } from '@zendeskgarden/react-tags'
 import I18n from '../../javascripts/lib/i18n'
 import { resizeContainer } from '../../javascripts/lib/helpers'
-import { IconButton } from '@zendeskgarden/react-buttons'
-import { SM } from '@zendeskgarden/react-typography'
-import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
 import SummaryItem from './SummaryItem'
+import FeedbackSection from './FeedbackSection'
+import { ToastProvider } from '@zendeskgarden/react-notifications'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
+const bottomProps = {
+  style: { bottom: DEFAULT_THEME.space.base * 8 }
+};
+const placementProps = {
+  'bottom-end': bottomProps
+}
 
 class App {
   constructor (client, _appData) {
@@ -56,61 +59,53 @@ class App {
 
     // Query various AI assistant generated fields
     const ticketAPIResponse = await this._client.get(ticketDataFields).catch(this._handleError.bind(this))
-
     // Pulling each field for less writing in JSX later
     const bulletPoints = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
     const actionItems = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : ""
-    const oneSentenceSummary = "hello, this is an example of a sentence that could be in this spot"//ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
-    const clientSentiment = "positive" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
+    const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
+    const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
     const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : ""
-    const lastUpdatedTimeStamp = ticketAPIResponse ? ticketAPIResponse['ticket.createdAt'] : ""
+    const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.createdAt'])) : null
 
     const appContainer = document.querySelector('.main')
 
     // Define query for setting feedback
     const setFeedback = (feedback) => {
-      if (feedback != aiFeedback) this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback)
+      if (feedback != aiFeedback) {
+        this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback)
+        console.log(feedback)
+      }
     }
 
     render(
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
-        <Grid>
-          <Row>
-          <Col>
-              <SummaryItem title="One Sentence Summary" content={oneSentenceSummary} sentiment={clientSentiment} variant="one-sentence-summary"/>
-              <div className="EPDivider"></div>
-            </Col>
-          </Row>
-          <Row>
+        <ToastProvider placementProps={placementProps} zIndex={1}>
+          <Grid>
+            <Row>
             <Col>
-              <SummaryItem title="Action Items" content={actionItems} variant="action-items"/>
-              <div className="EPDivider"></div>
-            </Col>
-          </Row>
-          <Row>
-          <Col>
-              <SummaryItem title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
-              <div className="EPDivider"></div>
-            </Col>
-          </Row>
-          <Row style={{marginBottom: 16}}>
+                <SummaryItem isLoading={false} title="One Sentence Summary" content={oneSentenceSummary} sentiment={clientSentiment} variant="one-sentence-summary"/>
+                <div className="EPDivider"></div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <SummaryItem isLoading={false} title="Action Items" content={actionItems} variant="action-items"/>
+                <div className="EPDivider"></div>
+              </Col>
+            </Row>
+            <Row>
             <Col>
-              { aiFeedback == "positive" ? 
-              <IconButton isSelected size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => setFeedback("positive")}>{ThumbsUpIcon}</IconButton> :
-              <IconButton size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => setFeedback("positive")}>{ThumbsUpIcon}</IconButton>
-              }
-              { aiFeedback == "negative" ? 
-              <IconButton isSelected size="small" isBasic={false} isPill={false} onClick={() => setFeedback("negative")}>{ThumbsDownIcon}</IconButton> :
-              <IconButton size="small" isBasic={false} isPill={false} onClick={() => setFeedback("negative")}>{ThumbsDownIcon}</IconButton>
-              }
-            </Col>
-          </Row>
-          <Row>
-            <Col textAlign="center">
-              { lastUpdatedTimeStamp ? <SM><Paragraph size="small">Last Updated: {lastUpdatedTimeStamp}</Paragraph></SM> : <></> }
-            </Col>
-          </Row>
-        </Grid>
+                <SummaryItem isLoading={false} title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
+                <div className="EPDivider"></div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <FeedbackSection feedback={aiFeedback} setFeedback={setFeedback} timestamp={lastUpdatedTimeStamp}></FeedbackSection>
+              </Col>
+            </Row>
+          </Grid>
+        </ToastProvider>
       </ThemeProvider>,
       appContainer
     )
