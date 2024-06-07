@@ -58,3 +58,4 @@ export function escapeSpecialChars (str) {
 export function generateCustomTicketKey (str) {
   return ('ticket.customField:custom_field_' + str)
 }
+

@@ -10,6 +10,8 @@ import { resizeContainer } from '../../javascripts/lib/helpers'
 import SummaryItem from './SummaryItem'
 import FeedbackSection from './FeedbackSection'
 import { ToastProvider } from '@zendeskgarden/react-notifications'
+import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
+import { IconButton } from '@zendeskgarden/react-buttons'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
@@ -101,7 +103,13 @@ class App {
             </Row>
             <Row>
               <Col>
-                <FeedbackSection feedback={aiFeedback} setFeedback={setFeedback} timestamp={lastUpdatedTimeStamp}></FeedbackSection>
+                { (lastUpdatedTimeStamp && aiFeedback != null) ? 
+                <FeedbackSection feedback={aiFeedback} setFeedback={setFeedback} timestamp={lastUpdatedTimeStamp}></FeedbackSection> : 
+                <>
+                  <IconButton size="small" isBasic={false} isPill={false} disabled>{ThumbsUpIcon}</IconButton>
+                  <IconButton size="small" isBasic={false} isPill={false} disabled>{ThumbsDownIcon}</IconButton>
+                </>
+                }
               </Col>
             </Row>
           </Grid>

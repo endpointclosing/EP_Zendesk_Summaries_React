@@ -12,7 +12,7 @@ const FeedbackSection = (props) => {
   // timestamp>>>positive_or_negative>>>additional_text_feedback
   // e.g., 818035920000>>>negative:::This ai summary sucks,,,
   // Because newline characters can be used in feedback, I can't reliably use that to delimit
-  const feedbackIsEmpty = props.feedback == ""
+  const feedbackIsEmpty = props.feedback == "" || props.feedback == null || props.feedback == undefined
   const allFeedbacks = feedbackIsEmpty ? [] : props.feedback.split(',,,')
   const newestFeedback = feedbackIsEmpty ? [] : allFeedbacks[allFeedbacks.length - 2].split('>>>')
   const newestDatetime = feedbackIsEmpty ? props.timestamp : new Date(Number(newestFeedback[0]))
@@ -36,7 +36,8 @@ const FeedbackSection = (props) => {
 
   /** TODO: These are poorly written functions that use local and global variables but save space*/
   const appendFeedbackItem = (timestampOfAppend, posOrNeg, additionalFeedback) => {
-    props.setFeedback(props.feedback + timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+    if (props.feedback) props.setFeedback(props.feedback + timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+    else props.setFeedback(timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
   }
   
   const handleFeedbackClicked = ( positiveOrNegative ) => {
