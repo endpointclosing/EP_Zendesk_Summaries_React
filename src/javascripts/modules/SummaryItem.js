@@ -5,6 +5,7 @@ import { OrderedList, Span, UnorderedList, XXL } from '@zendeskgarden/react-typo
 import { useState } from 'react'
 import { Button, Anchor } from '@zendeskgarden/react-buttons'
 import { Title } from "@zendeskgarden/react-notifications"
+import { Paragraph } from '@zendeskgarden/react-typography'
 import { Skeleton } from '@zendeskgarden/react-loaders'
 import SentimentTag from './SentimentTag'
 import ReactMarkdown from 'react-markdown'
@@ -34,9 +35,10 @@ const SummaryItem = (props) => {
           strong: ({node, ...props}) => <Span isBold {...props} />,
           em: ({node, ...props}) => <Span isBold {...props} />,
           a: ({node, ...props}) => <Anchor isExternal target="_blank" {...props}/>
-      }}></ReactMarkdown> : 
-      <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL>
+      }}></ReactMarkdown> : <></>
     }
+    { !props.content && !props.isLoading ? <Paragraph>Unable to load data</Paragraph> : <></>}
+    { props.isLoading ? <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL> : <></>}
     { props.sentiment ? <><br/><SentimentTag variant={props.sentiment}/><br/></> : <></> }
     <br/>
     <CopyToClipboard text={strippedText}>
