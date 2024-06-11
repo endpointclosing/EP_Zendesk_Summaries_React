@@ -62,18 +62,20 @@ class App {
     // Query various AI assistant generated fields
     const ticketAPIResponse = await this._client.get(ticketDataFields).catch(this._handleError.bind(this))
     // Pulling each field for less writing in JSX later
-    const bulletPoints = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : ""
-    const actionItems = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : ""
-    const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : ""
-    const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : ""
-    const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : ""
-    const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.createdAt'])) : null
+    // If the response has an error, these fields will become undefined. EMPTY FIELDS ARE A NULL.
+    const bulletPoints = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : undefined
+    const actionItems = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : undefined
+    const oneSentenceSummary = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : undefined
+    const clientSentiment = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : undefined
+    const aiFeedback = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : undefined
+    const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.createdAt'])) : undefined
 
+    const generalTicketInfo = await this._client.get('ticket').catch(this._handleError.bind(this))
     const appContainer = document.querySelector('.main')
 
     // Define query for setting feedback
     const setFeedback = (feedback) => {
-      if (feedback != aiFeedback) {
+      if (feedback !== aiFeedback) {
         this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback)
         console.log(feedback)
       }
@@ -103,12 +105,12 @@ class App {
             </Row>
             <Row>
               <Col>
-                { (lastUpdatedTimeStamp && aiFeedback != null) ? 
+                { lastUpdatedTimeStamp && (aiFeedback !== undefined) ? 
                 <FeedbackSection feedback={aiFeedback} setFeedback={setFeedback} timestamp={lastUpdatedTimeStamp}></FeedbackSection> : 
-                <>
-                  <IconButton size="small" isBasic={false} isPill={false} disabled>{ThumbsUpIcon}</IconButton>
-                  <IconButton size="small" isBasic={false} isPill={false} disabled>{ThumbsDownIcon}</IconButton>
-                </>
+                <div>
+                  <IconButton title="Unable to leave feedback" size="small" isBasic={false} isPill={false} disabled>{ThumbsUpIcon}</IconButton>
+                  <IconButton title="Unable to leave feedback" size="small" isBasic={false} isPill={false} disabled>{ThumbsDownIcon}</IconButton>
+                </div>
                 }
               </Col>
             </Row>

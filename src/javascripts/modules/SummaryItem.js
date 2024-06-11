@@ -25,7 +25,7 @@ const SummaryItem = (props) => {
     },2000);
   }
   // When using the ReactMarkdown library be aware that we are using the Zendesk Garden Design system which does not map well onto it
-  // Currently only bold, italics (which are turned bold), and ul/ol are supported. 
+  // Currently only bold, italics (which are both turned bold), and ul/ol are supported. 
   return <>
     <Title>{props.title}</Title>
     { props.content ? 
@@ -37,7 +37,8 @@ const SummaryItem = (props) => {
           a: ({node, ...props}) => <Anchor isExternal target="_blank" {...props}/>
       }}></ReactMarkdown> : <></>
     }
-    { !props.content && !props.isLoading ? <Paragraph>Unable to load data</Paragraph> : <></>}
+    { props.content === undefined && !props.isLoading ? <Paragraph>Unable to load data</Paragraph> : <></>}
+    { props.content === null && !props.isLoading ? <Paragraph>No summary generated.</Paragraph> : <></>}
     { props.isLoading ? <XXL><Skeleton height="24px"/><Skeleton width="90%" height="24px"/><Skeleton width="95%" height="24px"/></XXL> : <></>}
     { props.sentiment ? <><br/><SentimentTag variant={props.sentiment}/><br/></> : <></> }
     <br/>

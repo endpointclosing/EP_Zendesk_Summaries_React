@@ -6,17 +6,20 @@ import { Field, Label, Textarea } from '@zendeskgarden/react-forms'
 import { Notification, Title, Close, useToast } from '@zendeskgarden/react-notifications'
 import { SM, Paragraph } from '@zendeskgarden/react-typography'
 
+const POSITIVE = "positive"
+const NEGATIVE = "negative"
+
 const FeedbackSection = (props) => {
   // Because we only have one text field to store multiple versions of feedback, I had to get creative
   // Feedback will be appended to this text field in the following format (timestamp is the unixTime)
   // timestamp>>>positive_or_negative>>>additional_text_feedback
   // e.g., 818035920000>>>negative:::This ai summary sucks,,,
   // Because newline characters can be used in feedback, I can't reliably use that to delimit
-  const feedbackIsEmpty = props.feedback == "" || props.feedback == null || props.feedback == undefined
+  const feedbackIsEmpty = props.feedback === "" || props.feedback === null
   const allFeedbacks = feedbackIsEmpty ? [] : props.feedback.split(',,,')
   const newestFeedback = feedbackIsEmpty ? [] : allFeedbacks[allFeedbacks.length - 2].split('>>>')
   const newestDatetime = feedbackIsEmpty ? props.timestamp : new Date(Number(newestFeedback[0]))
-  const timestampMatch = feedbackIsEmpty ? false : +newestDatetime == +props.timestamp
+  const timestampMatch = feedbackIsEmpty ? false : +newestDatetime === +props.timestamp
   const newestPositiveOrNegative = timestampMatch ? newestFeedback[1] : ""
   const newestTextFeedback = timestampMatch ? newestFeedback[2] : ""
   const [feedback, setFeedback] = useState(newestPositiveOrNegative)
@@ -43,27 +46,27 @@ const FeedbackSection = (props) => {
   const handleFeedbackClicked = ( positiveOrNegative ) => {
     // This case handles when thumbs up is clicked
     switch (positiveOrNegative) {
-      case "positive":
-        setFeedback("positive")
+      case POSITIVE:
+        setFeedback(POSITIVE)
         // Set value
-        if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), "positive", "")}
-        else {appendFeedbackItem(props.timestamp.getTime(), "positive", "")}
-        if (feedbackTextInputVisible) setFeedbackTextInputVisible(false);
+        if (timestampMatch) editFeedbackItem(newestDatetime.getTime(), POSITIVE, "")
+        else appendFeedbackItem(props.timestamp.getTime(), POSITIVE, "")
+        if (feedbackTextInputVisible) setFeedbackTextInputVisible(false)
         break;
-      case "negative":
-        setFeedback("negative")
+      case NEGATIVE:
+        setFeedback(NEGATIVE)
         // Set value
-        if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), "negative", textFeedback)} 
-        else {appendFeedbackItem(props.timestamp.getTime(), "negative", textFeedback)}
-        if (!feedbackTextInputVisible) setFeedbackTextInputVisible(true);
+        if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), NEGATIVE, textFeedback)} 
+        else {appendFeedbackItem(props.timestamp.getTime(), NEGATIVE, textFeedback)}
+        if (!feedbackTextInputVisible) setFeedbackTextInputVisible(true)
         break;
       default:
         console.error("Invalid parameter provided.")
     }
   }
   const handleFeedbackSubmitted = () => {
-    if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), "negative", textFeedback)} 
-    else {appendFeedbackItem(props.timestamp.getTime(), "negative", textFeedback)}
+    if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), NEGATIVE, textFeedback)} 
+    else {appendFeedbackItem(props.timestamp.getTime(), NEGATIVE, textFeedback)}
     setFeedbackSubmitted(true)
     addToast(({ close }) => (
       <Notification type ="success">
@@ -83,24 +86,27 @@ const FeedbackSection = (props) => {
   const StartingStateButtons = () => {
     return (
       <>
-      { feedback == "positive" ? 
-        <IconButton isSelected size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => handleFeedbackClicked("positive")}>
+      { feedback == POSITIVE ? 
+        <IconButton isSelected size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => handleFeedbackClicked(POSITIVE)}>
           {ThumbsUpIcon}
         </IconButton> :
-        <IconButton size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => handleFeedbackClicked("positive")}>
+        <IconButton size="small" isBasic={false} isPill={false} style={{ marginRight: 8}} onClick={() => handleFeedbackClicked(POSITIVE)}>
           {ThumbsUpIcon}
         </IconButton>
       }
-      { feedback  == "negative" ? 
-        <IconButton isSelected size="small" isBasic={false} isPill={false} onClick={() => handleFeedbackClicked("negative")}>{ThumbsDownIcon}</IconButton> :
-        <IconButton size="small" isBasic={false} isPill={false} onClick={() => handleFeedbackClicked("negative")}>{ThumbsDownIcon}</IconButton>
+      { feedback  == NEGATIVE ? 
+        <IconButton isSelected size="small" isBasic={false} isPill={false} onClick={() => handleFeedbackClicked(NEGATIVE)}>{ThumbsDownIcon}</IconButton> :
+        <IconButton size="small" isBasic={false} isPill={false} onClick={() => handleFeedbackClicked(NEGATIVE)}>{ThumbsDownIcon}</IconButton>
       }  
       </>
     )
   }
   return (
     <>
-      { props.timestamp ? <SM><Paragraph size="small">Last Updated: {props.timestamp.toDateString() + " " + props.timestamp.toLocaleTimeString('en-US')}</Paragraph></SM> : <></> }
+      { props.timestamp && props.timestamp.toDateString() && props.timestamp.toLocaleTimeString() ? 
+      <SM><Paragraph size="small">Last Updated: {props.timestamp.toDateString() + " " + props.timestamp.toLocaleTimeString('en-US')}</Paragraph></SM> : 
+      <></> 
+      }
       <div style={{marginBottom: 16, marginTop: 16}}>
         <StartingStateButtons/>
       </div>
