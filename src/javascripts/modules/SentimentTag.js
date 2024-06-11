@@ -8,7 +8,7 @@ const SentimentTag = (props) => {
 		case 'negative':
 			return <Tag isPill hue="red">Negative Sentiment</Tag>
 		case 'neutral':
-			return <Tag isPill hue="grey">Nuetral Sentiment</Tag>
+			return <Tag isPill hue="grey">Neutral Sentiment</Tag>
 		default:
 			return <></>
 	}
