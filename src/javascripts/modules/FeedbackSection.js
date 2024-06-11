@@ -16,8 +16,8 @@ const FeedbackSection = (props) => {
   // e.g., 818035920000>>>negative:::This ai summary sucks,,,
   // Because newline characters can be used in feedback, I can't reliably use that to delimit
   const feedbackIsEmpty = props.feedback === "" || props.feedback === null
-  const allFeedbacks = feedbackIsEmpty ? [] : props.feedback.split(',,,')
-  const newestFeedback = feedbackIsEmpty ? [] : allFeedbacks[allFeedbacks.length - 2].split('>>>')
+  const allFeedbacks = feedbackIsEmpty || props.feedback === undefined ? [] : props.feedback.split(',,,')
+  const newestFeedback = feedbackIsEmpty || allFeedbacks[allFeedbacks.length - 2] === undefined ? [] : allFeedbacks[allFeedbacks.length - 2].split('>>>')
   const newestDatetime = feedbackIsEmpty ? props.timestamp : new Date(Number(newestFeedback[0]))
   const timestampMatch = feedbackIsEmpty ? false : +newestDatetime === +props.timestamp
   const newestPositiveOrNegative = timestampMatch ? newestFeedback[1] : ""
@@ -25,7 +25,6 @@ const FeedbackSection = (props) => {
   const [feedback, setFeedback] = useState(newestPositiveOrNegative)
   const [textFeedback, setTextFeedback] = useState(newestTextFeedback)
   const [feedbackTextInputVisible, setFeedbackTextInputVisible] = useState(newestTextFeedback.length > 0)
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(true)
   // Used to notify user if they successfully submitted. 
   const { addToast } = useToast();  
 
@@ -34,13 +33,20 @@ const FeedbackSection = (props) => {
     // In order to make an edit to an existing feedback, we need to change the delimited feedbacks array and then join it again
     let editedFeedback = allFeedbacks
     editedFeedback[allFeedbacks.length - 2] = timestampOfEdit + ">>>" + posOrNeg + ">>>" + additionalFeedback
+    console.log(editedFeedback.join(",,,"))
     props.setFeedback(editedFeedback.join(",,,"))
   }
 
   /** TODO: These are poorly written functions that use local and global variables but save space*/
   const appendFeedbackItem = (timestampOfAppend, posOrNeg, additionalFeedback) => {
-    if (props.feedback) props.setFeedback(props.feedback + timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
-    else props.setFeedback(timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+    if (props.feedback) {
+      props.setFeedback(props.feedback + timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+      console.log(props.feedback + timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+    } 
+    else {
+      props.setFeedback(timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+      console.log(timestampOfAppend + ">>>" + posOrNeg + ">>>" + additionalFeedback + ",,,")
+    }
   }
   
   const handleFeedbackClicked = ( positiveOrNegative ) => {
@@ -64,23 +70,11 @@ const FeedbackSection = (props) => {
         console.error("Invalid parameter provided.")
     }
   }
-  const handleFeedbackSubmitted = () => {
-    if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), NEGATIVE, textFeedback)} 
-    else {appendFeedbackItem(props.timestamp.getTime(), NEGATIVE, textFeedback)}
-    setFeedbackSubmitted(true)
-    addToast(({ close }) => (
-      <Notification type ="success">
-        <Title>Successly submmited feedback</Title>
-        Thank you for providing feedback to the team.
-        <Close onClick={close} aria-label="Close" />
-      </Notification>
-    ), {'placement': 'bottom-end'})
-  }
 
   const handleTextFeedbackChange = (event) => {
     setTextFeedback(event.target.value);
-    if (newestFeedback[2] != event.target.value) {if (feedbackSubmitted) setFeedbackSubmitted(false)}
-    else {if (!feedbackSubmitted) setFeedbackSubmitted(true)}
+    if (timestampMatch) {editFeedbackItem(newestDatetime.getTime(), NEGATIVE, event.target.value)}
+    else {appendFeedbackItem(props.timestamp.getTime(), NEGATIVE, event.target.value)}
   }
   
   const StartingStateButtons = () => {
@@ -116,10 +110,6 @@ const FeedbackSection = (props) => {
           <Label hidden isRegular>Additional Feedback</Label>
           <Textarea value={textFeedback} placeholder="Enter additional feedback for the team" onChange={handleTextFeedbackChange} minRows={3} maxRows={5}/>
         </Field>
-        { feedbackSubmitted ? 
-          <Button size="small" disabled isStretched onClick={()=>handleFeedbackSubmitted()} isPrimary>Submit</Button> :
-          <Button size="small" isStretched onClick={()=>handleFeedbackSubmitted()} isPrimary>Submit</Button>
-        }
       </> : 
       <></>}
     </>

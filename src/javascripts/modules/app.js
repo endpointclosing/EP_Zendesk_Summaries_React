@@ -12,6 +12,7 @@ import FeedbackSection from './FeedbackSection'
 import { ToastProvider } from '@zendeskgarden/react-notifications'
 import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
 import { IconButton } from '@zendeskgarden/react-buttons'
+import { Accordion } from '@zendeskgarden/react-accordions'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
@@ -63,58 +64,45 @@ class App {
     const ticketAPIResponse = await this._client.get(ticketDataFields).catch(this._handleError.bind(this))
     // Pulling each field for less writing in JSX later
     // If the response has an error, these fields will become undefined. EMPTY FIELDS ARE A NULL.
-    const bulletPoints = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : undefined
-    const actionItems = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : undefined
-    const oneSentenceSummary = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : undefined
-    const clientSentiment = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : undefined
-    const aiFeedback = "" //ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : undefined
+    const bulletPoints = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points']] : undefined
+    const actionItems = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items']] : undefined
+    const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : undefined
+    const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : undefined
+    const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : undefined
     const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.createdAt'])) : undefined
-
-    const generalTicketInfo = await this._client.get('ticket').catch(this._handleError.bind(this))
     const appContainer = document.querySelector('.main')
 
     // Define query for setting feedback
     const setFeedback = (feedback) => {
       if (feedback !== aiFeedback) {
-        this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback)
-        console.log(feedback)
+        this._client.set(TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], feedback).catch(this._handleError.bind(this))
       }
     }
 
     render(
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
         <ToastProvider placementProps={placementProps} zIndex={1}>
-          <Grid>
-            <Row>
-            <Col>
-                <SummaryItem isLoading={false} title="One Sentence Summary" content={oneSentenceSummary} sentiment={clientSentiment} variant="one-sentence-summary"/>
-                <div className="EPDivider"></div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <SummaryItem isLoading={false} title="Action Items" content={actionItems} variant="action-items"/>
-                <div className="EPDivider"></div>
-              </Col>
-            </Row>
-            <Row>
-            <Col>
-                <SummaryItem isLoading={false} title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
-                <div className="EPDivider"></div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                { lastUpdatedTimeStamp && (aiFeedback !== undefined) ? 
-                <FeedbackSection feedback={aiFeedback} setFeedback={setFeedback} timestamp={lastUpdatedTimeStamp}></FeedbackSection> : 
-                <div>
-                  <IconButton title="Unable to leave feedback" size="small" isBasic={false} isPill={false} disabled>{ThumbsUpIcon}</IconButton>
-                  <IconButton title="Unable to leave feedback" size="small" isBasic={false} isPill={false} disabled>{ThumbsDownIcon}</IconButton>
-                </div>
-                }
-              </Col>
-            </Row>
-          </Grid>
+          <div id="ep-summary-frame">
+            <Accordion isExpandable defaultExpandedSections={[0, 1, 2]} isCompact level={4}>
+              <SummaryItem isLoading={false} title="One Sentence Summary" content={oneSentenceSummary} sentiment={clientSentiment} variant="one-sentence-summary"/>
+              <SummaryItem isLoading={false} title="Action Items" content={actionItems} variant="action-items"/>
+              <SummaryItem isLoading={false} title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
+            </Accordion>
+            <Grid>
+              <Row>
+                <Col>
+                  <br/>
+                  { lastUpdatedTimeStamp && (aiFeedback !== undefined) ? 
+                  <FeedbackSection feedback={aiFeedback} setFeedback={setFeedback} timestamp={lastUpdatedTimeStamp}></FeedbackSection> : 
+                  <div>
+                    <IconButton title="Unable to leave feedback" size="small" isBasic={false} isPill={false} disabled>{ThumbsUpIcon}</IconButton>
+                    <IconButton title="Unable to leave feedback" size="small" isBasic={false} isPill={false} disabled>{ThumbsDownIcon}</IconButton>
+                  </div>
+                  }
+                </Col>
+              </Row>
+            </Grid>
+          </div>
         </ToastProvider>
       </ThemeProvider>,
       appContainer

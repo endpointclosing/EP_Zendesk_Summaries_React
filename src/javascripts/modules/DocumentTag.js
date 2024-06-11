@@ -1,10 +1,10 @@
 import { Tag } from '@zendeskgarden/react-tags'
 import React from 'react'
 
-const SentimentTag = (props) => {
+const DocumentTag = (props) => {
 	if (props.variant && props.variant.toLowerCase()) {
-		switch(props.variant.toLowerCase()) {
-			case 'positive':
+		switch(props.variant) {
+			case 'PSA':
 				return <Tag isPill hue="green">Positive Sentiment</Tag>
 			case 'negative':
 				return <Tag isPill hue="red">Negative Sentiment</Tag>
@@ -18,4 +18,4 @@ const SentimentTag = (props) => {
 	else console.error ("No variant provided.")
 }
 
-export default SentimentTag
+export default DocumentTag
