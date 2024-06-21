@@ -37,3 +37,4 @@ becomes
 `https://endpointclosing1695654615.zendesk.com/agent/tickets/4?zcli_apps=true`
 7) Click the Apps icon on the right side of the ticket view and you should be able to see the custom application like in the following image:
 ![Custom Dev App Running](/docs/images/RunningDevApp.png)
+8) At this point you should be able to make changes to files in `/src` and build those changes either manually with `npm run build:dev` or automatically with `npm run watch`. In order to see changes after building, simply refresh the Zendesk web page with the `?zcli_apps=true` appended to the url and you should be able to see your changes reflected in the app. If you are having issues, consider using a private browser mode to prevent caching or hard reload so elements are not cached. 
