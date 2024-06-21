@@ -23,18 +23,19 @@ You can configure the requirements of this application by following tutorials to
 Setting up App Development
 ===============
 Once your Zendesk instance has been properly configured and you have the custom field IDs to reference -- you can start setting up your development environment. 
-1) Open a terminal in the root app directory. This should be the same directory as the README.md and the package.json.
-2) Run `npm install` and allow node modules to install.
-3) Run `npm run build:dev`. This will populate the `/dist` folder with the compiled web app. If you would like webpack to build continuously while you develop, run `npm run watch`. This will rebuild the dev version of the application anytime a change to a source file is made. 
-4) If you ran `npm run watch`, open a new terminal in the root app directory and run`npm zcli apps:server dist`. If you ran `npm run build:dev` instead, simply run `npm zcli apps:server dist` without opening a new terminal. This serves the app to your Zendesk instance when you append `?zcli_apps=true` to your Zendesk URL. 
-5) As `zcli apps:server dist` runs the terminal will ask you to provide the custom field IDs of various Zendesk fields. Fill the corresponding field IDs to the ones you created in your Zendesk instance. 
+1) If you have not already, install Zendesk Command Line Interface (ZCLI) using this [tutorial](https://developer.zendesk.com/documentation/apps/getting-started/using-zcli/#installing-and-updating-zcli). In addition, you will need a version of node that is higher than or equal to `18.12.1`. 
+2) Open a terminal in the root app directory. This should be the same directory as the README.md and the package.json.
+3) Run `npm install` and allow node modules to install.
+4) Run `npm run build:dev`. This will populate the `/dist` folder with the compiled web app. If you would like webpack to build continuously while you develop, run `npm run watch`. This will rebuild the dev version of the application anytime a change to a source file is made. 
+5) If you ran `npm run watch`, open a new terminal in the root app directory and run`npm zcli apps:server dist`. If you ran `npm run build:dev` instead, simply run `npm zcli apps:server dist` without opening a new terminal. This serves the app to your Zendesk instance when you append `?zcli_apps=true` to your Zendesk URL. 
+6) As `zcli apps:server dist` runs the terminal will ask you to provide the custom field IDs of various Zendesk fields. Fill the corresponding field IDs to the ones you created in your Zendesk instance. 
 ![Zendesk App Prompt](/docs/images/ZCLIAppServerDevPrompt.png)
 Once you fill out these fields, you should see a confirmation of the app server running. 
-6) This app is created for Zendesk Support and lives in a ticket's sidebar. You can see where that is here:
+7) This app is created for Zendesk Support and lives in a ticket's sidebar. You can see where that is here:
 ![Different Support App Locations](https://zen-marketing-documentation.s3.amazonaws.com/docs/en/app_locations.png) In order to see the app while developing, open a Zendesk instance in your internet browser and sign in. Once you open a ticket, append `?zcli_apps=true` to the browser url and press ENTER. For example the url 
 `https://endpointclosing1695654615.zendesk.com/agent/tickets/4`
 becomes 
 `https://endpointclosing1695654615.zendesk.com/agent/tickets/4?zcli_apps=true`
-7) Click the Apps icon on the right side of the ticket view and you should be able to see the custom application like in the following image:
+8) Click the Apps icon on the right side of the ticket view and you should be able to see the custom application like in the following image:
 ![Custom Dev App Running](/docs/images/RunningDevApp.png)
-8) At this point you should be able to make changes to files in `/src` and build those changes either manually with `npm run build:dev` or automatically with `npm run watch`. In order to see changes after building, simply refresh the Zendesk web page with the `?zcli_apps=true` appended to the url and you should be able to see your changes reflected in the app. If you are having issues, consider using a private browser mode to prevent caching or hard reload so elements are not cached. 
+9) At this point you should be able to make changes to files in `/src` and build those changes either manually with `npm run build:dev` or automatically with `npm run watch`. In order to see changes after building, simply refresh the Zendesk web page with the `?zcli_apps=true` appended to the url and you should be able to see your changes reflected in the app. If you are having issues, consider using a private browser mode to prevent caching or hard reload so elements are not cached. 
