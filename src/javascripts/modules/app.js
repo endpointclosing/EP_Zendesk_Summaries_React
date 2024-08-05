@@ -52,7 +52,7 @@ class App {
 
     // List all of the initial get queries we are going to make
     const ticketDataFields = [
-      'ticket.createdAt',
+      'ticket.updatedAt',
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points'],
@@ -69,7 +69,7 @@ class App {
     const oneSentenceSummary = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary']] : undefined
     const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : undefined
     const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : undefined
-    const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.createdAt'])) : undefined
+    const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.updatedAt'])) : undefined
     const appContainer = document.querySelector('.main')
 
     // Define query for setting feedback

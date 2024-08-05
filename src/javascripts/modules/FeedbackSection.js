@@ -1,9 +1,9 @@
-import React, { HTMLAttributes} from 'react'
-import { IconButton, Button } from '@zendeskgarden/react-buttons'
+import React, { useEffect } from 'react'
+import { IconButton } from '@zendeskgarden/react-buttons'
 import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
 import { useState } from 'react'
 import { Field, Label, Textarea } from '@zendeskgarden/react-forms'
-import { Notification, Title, Close, useToast } from '@zendeskgarden/react-notifications'
+import { useToast } from '@zendeskgarden/react-notifications'
 import { SM, Paragraph } from '@zendeskgarden/react-typography'
 
 const POSITIVE = "positive"
@@ -24,7 +24,7 @@ const FeedbackSection = (props) => {
   const newestTextFeedback = timestampMatch ? newestFeedback[2] : ""
   const [feedback, setFeedback] = useState(newestPositiveOrNegative)
   const [textFeedback, setTextFeedback] = useState(newestTextFeedback)
-  const [feedbackTextInputVisible, setFeedbackTextInputVisible] = useState(newestTextFeedback.length > 0)
+  const [feedbackTextInputVisible, setFeedbackTextInputVisible] = useState(newestTextFeedback.length > 0);
   // Used to notify user if they successfully submitted. 
   const { addToast } = useToast();  
 
@@ -101,17 +101,21 @@ const FeedbackSection = (props) => {
       <SM><Paragraph size="small">Last Updated: {props.timestamp.toDateString() + " " + props.timestamp.toLocaleTimeString('en-US')}</Paragraph></SM> : 
       <></> 
       }
-      <div style={{marginBottom: 16, marginTop: 16}}>
-        <StartingStateButtons/>
-      </div>
       { feedbackTextInputVisible ? 
       <>
-        <Field style={{marginBottom: 4}}>
+        <Field style={{marginBottom: 16, marginTop: 16}}>
           <Label hidden isRegular>Additional Feedback</Label>
-          <Textarea value={textFeedback} placeholder="Enter additional feedback for the team" onChange={handleTextFeedbackChange} minRows={3} maxRows={5}/>
+          <Textarea value={textFeedback} placeholder="Enter additional feedback for the team and submit ticket" onChange={handleTextFeedbackChange} minRows={3} maxRows={5}/>
         </Field>
       </> : 
       <></>}
+      <div style={{marginTop: 16}}>
+        <StartingStateButtons/>
+      </div>
+      { !feedbackTextInputVisible &&
+        <div id="bottom-of-AI-app" style={{height: 96}}>
+        </div>
+      }
     </>
   )
 }

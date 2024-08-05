@@ -4,14 +4,13 @@ import { CopyIconStroke, CopyIconFill } from '../lib/icons'
 import { OrderedList, Span, UnorderedList, XXL } from '@zendeskgarden/react-typography'
 import { useState } from 'react'
 import { Button, Anchor } from '@zendeskgarden/react-buttons'
-import { Title } from "@zendeskgarden/react-notifications"
 import { Paragraph } from '@zendeskgarden/react-typography'
 import { Skeleton } from '@zendeskgarden/react-loaders'
 import SentimentTag from './SentimentTag'
 import ReactMarkdown from 'react-markdown'
 import removeMarkdown from 'remove-markdown'
 import { Accordion } from '@zendeskgarden/react-accordions'
-import { DocumentTag } from './DocumentTag'
+import DocumentTag from './DocumentTag'
 
 
 const SummaryItem = (props) => {
