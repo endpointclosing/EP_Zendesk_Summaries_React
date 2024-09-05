@@ -59,3 +59,30 @@ export function generateCustomTicketKey (str) {
   return ('ticket.customField:custom_field_' + str)
 }
 
+export const parseValue = (key, value) => {
+  let parsedValue = value ? value : "";
+  parsedValue = parsedValue.replaceAll("_", " ");
+  const lowercaseKey = key.toLowerCase();
+  if (lowercaseKey.includes("price") || lowercaseKey.includes("amount") || lowercaseKey.includes("fee") || lowercaseKey.includes("credits") || lowercaseKey.includes("deposit")) {
+    parsedValue = "$" + parsedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  } else if (parsedValue === parsedValue.toUpperCase() && (lowercaseKey !== "verse file number" && lowercaseKey !== "state")) {
+    parsedValue = toTitleCase(parsedValue.toLowerCase())
+  } else if (parsedValue === "true" || parsedValue === "false") {
+    parsedValue = toTitleCase(parsedValue);
+  } 
+  return parsedValue;
+}
+
+export const parseName = (key) => {
+  return key
+}
+
+const toTitleCase = (str) => {
+  return str.replace(/\w\S*/g, function(txt){
+    if ((txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()) === "And") {
+      return "and"
+    } else {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    }
+  });
+}

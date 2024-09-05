@@ -45,6 +45,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "@fullstory/browser": "^2.0.5",
     "@zendeskgarden/css-bedrock": "^9.0.0",
     "@zendeskgarden/react-accordions": "^8.62.0",
     "@zendeskgarden/react-avatars": "^8.62.0",
@@ -54,6 +55,7 @@
     "@zendeskgarden/react-colorpickers": "^8.62.0",
     "@zendeskgarden/react-datepickers": "^8.62.0",
     "@zendeskgarden/react-dropdowns": "^8.62.0",
+    "@zendeskgarden/react-dropdowns.next": "^8.76.7",
     "@zendeskgarden/react-forms": "^8.62.0",
     "@zendeskgarden/react-grid": "^8.62.0",
     "@zendeskgarden/react-loaders": "^8.62.0",

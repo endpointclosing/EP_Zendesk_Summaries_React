@@ -7,12 +7,12 @@ import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming'
 import { Grid, Row, Col } from '@zendeskgarden/react-grid'
 import I18n from '../../javascripts/lib/i18n'
 import { resizeContainer } from '../../javascripts/lib/helpers'
-import SummaryItem from './SummaryItem'
+
 import FeedbackSection from './FeedbackSection'
 import { ToastProvider } from '@zendeskgarden/react-notifications'
 import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
-import { IconButton } from '@zendeskgarden/react-buttons'
-import { Accordion } from '@zendeskgarden/react-accordions'
+import { Anchor, IconButton } from '@zendeskgarden/react-buttons'
+import TabsWrapper from './TabsWrapper'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
@@ -47,17 +47,23 @@ class App {
       'client_sentiment': appMetadata.settings['Client Sentiment Field ID'],
       'bullet_points': appMetadata.settings['Bullet Points Summary Field ID'],
       'action_items': appMetadata.settings['Action Items Field ID'],
-      'ai_feedback': appMetadata.settings['AI Feedback Field ID']
+      'ai_feedback': appMetadata.settings['AI Feedback Field ID'],
+      'transaction_data':  appMetadata.settings['Transaction Data Field ID'],
+      'file_number': appMetadata.settings['File Number Field ID']
     }
 
     // List all of the initial get queries we are going to make
     const ticketDataFields = [
       'ticket.updatedAt',
+      'ticket.via',
+      'ticket.id',
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['one_sentence_summary'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['bullet_points'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], 
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['transaction_data'],
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['file_number']
     ]
 
     // Query various AI assistant generated fields
@@ -70,8 +76,32 @@ class App {
     const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : undefined
     const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : undefined
     const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.updatedAt'])) : undefined
+    // Used to provide data for fullstory
+    const ticketID = ticketAPIResponse ? ticketAPIResponse['ticket.id'] : undefined
+    // I use the file number field instead of getting it through the transaction data because it is more reliable
+    const fileNumber = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['file_number']] : undefined
+    // Get transaction data in JSON format
+    const transactionData = (ticketAPIResponse && ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['transaction_data']]) ? 
+        JSON.parse(ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['transaction_data']]) : undefined
+    // Checking whether it is a call to throw an alert that we don't currently support calls
+    const ticketIsCall = ticketAPIResponse ? (ticketAPIResponse['ticket.via'].channel === "voice_outbound"|| 
+        ticketAPIResponse['ticket.via'].channel === "voice_voicemail" || ticketAPIResponse['ticket.via'].channel === "voice_inbound") : undefined
     const appContainer = document.querySelector('.main')
+    if (ticketAPIResponse && ticketID && currentUser && currentUser.id) {
+        // This script allows fullstory to identify which ticket is being reviewed.
+        console.info("Sending identification information to Fullstory...")
+        FS('setIdentity', {
+          uid: ticketID,
+          properties: {
+            zendeskUserID: currentUser.id,
+            zendeskUserName: currentUser.name ? currentUser.name : undefined,
+          }
+        });
+    } else {
+      console.warn("Unable to find ticket ID.")
+    }
 
+    // This is an example script - don't forget to change it!
     // Define query for setting feedback
     const setFeedback = (feedback) => {
       if (feedback !== aiFeedback) {
@@ -83,11 +113,15 @@ class App {
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
         <ToastProvider placementProps={placementProps} zIndex={1}>
           <div id="ep-summary-frame">
-            <Accordion isExpandable defaultExpandedSections={[0, 1, 2]} isCompact level={4}>
-              <SummaryItem isLoading={false} title="One Sentence Summary" content={oneSentenceSummary} sentiment={clientSentiment} variant="one-sentence-summary"/>
-              <SummaryItem isLoading={false} title="Action Items" content={actionItems} variant="action-items"/>
-              <SummaryItem isLoading={false} title="Bullet Points" content={bulletPoints} variant="bullet-points"/>
-            </Accordion>
+            { fileNumber && 
+              <Grid style={{paddingTop: 8, paddingBottom: 8}}>
+                <Anchor isExternal externalIconLabel={"Link to Verse Transaction"} target="_blank" href={"https://verse.endpointclosing.com/transaction/" + fileNumber}>
+                  {fileNumber + " in Verse"}
+                </Anchor>
+              </Grid>
+            }
+            <TabsWrapper isCall={ticketIsCall} oneSentenceSummary={oneSentenceSummary} bulletPoints={bulletPoints} 
+                actionItems={actionItems} clientSentiment={clientSentiment} transactionData={transactionData} client={this._client}></TabsWrapper>
             <Grid>
               <Row>
                 <Col>

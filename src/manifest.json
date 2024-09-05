@@ -1,5 +1,5 @@
 {
-  "name": "EP Summaries",
+  "name": "EP Assistant",
   "author": {
     "name": "Matthew Lim",
     "email": "mlim@endpoint.com"
@@ -44,6 +44,18 @@
       "type": "number",
       "required": true,
       "default": 27081431860756
+    },
+    {
+      "name": "Transaction Data Field ID",
+      "type": "number",
+      "required": true,
+      "default": 28352825199508
+    },
+    {
+      "name": "File Number Field ID",
+      "type": "number",
+      "required": true,
+      "default": 19495415964948
     }
   ],
   "version": "1.0",
