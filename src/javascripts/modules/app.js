@@ -91,12 +91,27 @@ class App {
         // This script allows fullstory to identify which ticket is being reviewed.
         console.info("Sending identification information to Fullstory...")
         FS('setIdentity', {
-          uid: ticketID,
+          uid: currentUser.id,
           properties: {
-            zendeskUserID: currentUser.id,
-            zendeskUserName: currentUser.name ? currentUser.name : undefined,
+            zendeskTicketID: ticketID,
+            displayName: currentUser.name ? currentUser.name : undefined,
+            email: currentUser.email ? currentUser.email : undefined
           }
         });
+    } else {
+      console.warn("Unable to find ticket ID.")
+    }
+
+    if (ticketAPIResponse && ticketID && currentUser && currentUser.id) {
+      // This script allows fullstory to identify which ticket is being reviewed.
+      console.info("Sending page information to Fullstory...")
+      FS('setProperties', {
+        type: 'page',
+        properties: {
+          pageName: "EP Assistant for ticket "+ String(ticketID),
+          zendeskTicketID: ticketID,
+        }
+      });
     } else {
       console.warn("Unable to find ticket ID.")
     }
