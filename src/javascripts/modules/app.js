@@ -29,8 +29,18 @@ class App {
     // this.initializePromise is only used in testing
     // indicate app initilization(including all async operations) is complete
     this.initializePromise = this.init()
+    this.hasOpenedInSession = false;
   }
 
+  async checkWindowOpen () {
+    if (!this.hasOpenedInSession) {
+      FS('trackEvent', {
+        name: "EP Assistant Opened"
+      });
+      console.info("Sending EP Assistant Open Event...")
+      this.hasOpenedInSession = true;
+    }
+  }
 
   /**
    * Initialize module, render main template
@@ -87,17 +97,20 @@ class App {
     const ticketIsCall = ticketAPIResponse ? (ticketAPIResponse['ticket.via'].channel === "voice_outbound"|| 
         ticketAPIResponse['ticket.via'].channel === "voice_voicemail" || ticketAPIResponse['ticket.via'].channel === "voice_inbound") : undefined
     const appContainer = document.querySelector('.main')
+
+    // This is the listener that checks whether the window is open because the EP Assistant App resizes everytime it is opened.
+    onresize = () => this.checkWindowOpen();
+
     if (ticketAPIResponse && ticketID && currentUser && currentUser.id) {
-        // This script allows fullstory to identify which ticket is being reviewed.
-        console.info("Sending identification information to Fullstory...")
-        FS('setIdentity', {
-          uid: currentUser.id,
-          properties: {
-            zendeskTicketID: ticketID,
-            displayName: currentUser.name ? currentUser.name : undefined,
-            email: currentUser.email ? currentUser.email : undefined
-          }
-        });
+      // This script allows fullstory to identify which ticket is being reviewed.
+      console.info("Sending identification information to Fullstory...")
+      FS('setIdentity', {
+        uid: currentUser.id,
+        properties: {
+          displayName: currentUser.name ? currentUser.name : undefined,
+          email: currentUser.email ? currentUser.email : undefined
+        }
+      });
     } else {
       console.warn("Unable to find ticket ID.")
     }
@@ -116,7 +129,6 @@ class App {
       console.warn("Unable to find ticket ID.")
     }
 
-    // This is an example script - don't forget to change it!
     // Define query for setting feedback
     const setFeedback = (feedback) => {
       if (feedback !== aiFeedback) {
