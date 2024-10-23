@@ -27,7 +27,7 @@ Once your Zendesk instance has been properly configured and you have the custom 
 2) Open a terminal in the root app directory. This should be the same directory as the README.md and the package.json.
 3) Run `npm install` and allow node modules to install.
 4) Run `npm run build:dev`. This will populate the `/dist` folder with the compiled web app. If you would like webpack to build continuously while you develop, run `npm run watch`. This will rebuild the dev version of the application anytime a change to a source file is made. 
-5) If you ran `npm run watch`, open a new terminal in the root app directory and run`npm zcli apps:server dist`. If you ran `npm run build:dev` instead, simply run `npm zcli apps:server dist` without opening a new terminal. This serves the app to your Zendesk instance when you append `?zcli_apps=true` to your Zendesk URL. 
+5) If you ran `npm run watch`, open a new terminal in the root app directory and run`zcli apps:server dist`. If you ran `npm run build:dev` instead, simply run `zcli apps:server dist` without opening a new terminal. This serves the app to your Zendesk instance when you append `?zcli_apps=true` to your Zendesk URL. 
 6) As `zcli apps:server dist` runs the terminal will ask you to provide the custom field IDs of various Zendesk fields. Fill the corresponding field IDs to the ones you created in your Zendesk instance. 
 ![Zendesk App Prompt](/docs/images/ZCLIAppServerDevPrompt.png)
 Once you fill out these fields, you should see a confirmation of the app server running. 
