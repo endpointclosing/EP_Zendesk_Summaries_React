@@ -1,7 +1,7 @@
 {
   "name": "EP Assistant",
   "author": {
-    "name": "Matthew Lim",
+    "name": "Matthew Lim & Nima Nikzad",
     "email": "mlim@endpoint.com"
   },
   "defaultLocale": "en",
@@ -50,6 +50,12 @@
       "type": "number",
       "required": true,
       "default": 28352825199508
+    },
+    {
+      "name": "Macro Recommendations Field ID",
+      "type": "number",
+      "required": true,
+      "default": 30257738507156
     },
     {
       "name": "File Number Field ID",
