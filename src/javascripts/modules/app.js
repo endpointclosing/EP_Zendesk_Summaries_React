@@ -13,6 +13,7 @@ import { ToastProvider } from '@zendeskgarden/react-notifications'
 import { ThumbsDownIcon, ThumbsUpIcon } from '../lib/icons'
 import { Anchor, IconButton } from '@zendeskgarden/react-buttons'
 import TabsWrapper from './TabsWrapper'
+import MacroRecommendations from './MacroRecommendations'
 
 const MAX_HEIGHT = 2000
 const TICKET_CUSTOM_FIELD_PREFIX = 'ticket.customField:custom_field_'
@@ -58,7 +59,8 @@ class App {
       'bullet_points': appMetadata.settings['Bullet Points Summary Field ID'],
       'action_items': appMetadata.settings['Action Items Field ID'],
       'ai_feedback': appMetadata.settings['AI Feedback Field ID'],
-      'transaction_data':  appMetadata.settings['Transaction Data Field ID'],
+      'transaction_data': appMetadata.settings['Transaction Data Field ID'],
+      'macro_recommendations': appMetadata.settings['Macro Recommendations Field ID'],
       'file_number': appMetadata.settings['File Number Field ID']
     }
 
@@ -73,6 +75,7 @@ class App {
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['action_items'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback'], 
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['transaction_data'],
+      TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['macro_recommendations'],
       TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['file_number']
     ]
 
@@ -86,6 +89,7 @@ class App {
     const clientSentiment = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['client_sentiment']] : undefined
     const aiFeedback = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['ai_feedback']] : undefined
     const lastUpdatedTimeStamp = ticketAPIResponse ? new Date(Date.parse(ticketAPIResponse['ticket.updatedAt'])) : undefined
+    const macroRecommendations = ticketAPIResponse ? ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['macro_recommendations']] : undefined
     // Used to provide data for fullstory
     const ticketID = ticketAPIResponse ? ticketAPIResponse['ticket.id'] : undefined
     // I use the file number field instead of getting it through the transaction data because it is more reliable
@@ -136,10 +140,22 @@ class App {
       }
     }
 
+    // Are there any macro recommendations to display?
+    const displayMacroRecommendations = macroRecommendations && JSON.parse(macroRecommendations).macro_recommendations.length > 0 ? true : false
+
     render(
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
         <ToastProvider placementProps={placementProps} zIndex={1}>
           <div id="ep-summary-frame">
+            { displayMacroRecommendations &&
+              <Grid>
+                <Row>
+                  <Col>
+                    <MacroRecommendations macroRecommendations={macroRecommendations}></MacroRecommendations>
+                  </Col>
+                </Row>
+              </Grid>
+            }
             { fileNumber && 
               <Grid style={{paddingTop: 8, paddingBottom: 8}}>
                 <Anchor isExternal externalIconLabel={"Link to Verse Transaction"} target="_blank" href={"https://verse.endpointclosing.com/transaction/" + fileNumber}>
