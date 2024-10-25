@@ -98,8 +98,8 @@ class App {
     const transactionData = (ticketAPIResponse && ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['transaction_data']]) ? 
         JSON.parse(ticketAPIResponse[TICKET_CUSTOM_FIELD_PREFIX + EndpointFieldIds['transaction_data']]) : undefined
     // Checking whether it is a call to throw an alert that we don't currently support calls
-    const ticketIsCall = ticketAPIResponse ? (ticketAPIResponse['ticket.via'].channel === "voice_outbound"|| 
-        ticketAPIResponse['ticket.via'].channel === "voice_voicemail" || ticketAPIResponse['ticket.via'].channel === "voice_inbound") : undefined
+    //const ticketIsCall = ticketAPIResponse ? (ticketAPIResponse['ticket.via'].channel === "voice_outbound"|| 
+    //    ticketAPIResponse['ticket.via'].channel === "voice_voicemail" || ticketAPIResponse['ticket.via'].channel === "voice_inbound") : undefined
     const appContainer = document.querySelector('.main')
 
     // This is the listener that checks whether the window is open because the EP Assistant App resizes everytime it is opened.
@@ -163,7 +163,7 @@ class App {
                 </Anchor>
               </Grid>
             }
-            <TabsWrapper isCall={ticketIsCall} oneSentenceSummary={oneSentenceSummary} bulletPoints={bulletPoints} 
+            <TabsWrapper oneSentenceSummary={oneSentenceSummary} bulletPoints={bulletPoints} 
                 actionItems={actionItems} clientSentiment={clientSentiment} transactionData={transactionData} client={this._client}></TabsWrapper>
             <Grid>
               <Row>

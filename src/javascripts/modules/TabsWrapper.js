@@ -19,19 +19,11 @@ const TabsWrapper = (props) => {
         </TabList>
         <TabPanel item={AI_SUMMARIES} key={AI_SUMMARIES + "_tab_key"}>
           <Grid>
-            { props.isCall === true && 
-              <Alert type="info">
-                <Title>Phone call summaries are not currently supported</Title>
-                We are working on supporting phone calls within the Zendesk Summaries App. 
-              </Alert> 
-            }
-            { props.isCall === false && 
-              <Accordion isExpandable defaultExpandedSections={[0, 1, 2]} isCompact level={4}>
-                <SummaryItem isLoading={false} title="One Sentence Summary" content={props.oneSentenceSummary} sentiment={props.clientSentiment} variant="one-sentence-summary"/>
-                <SummaryItem isLoading={false} title="Action Items" content={props.actionItems} variant="action-items"/>
-                <SummaryItem isLoading={false} title="Bullet Points" content={props.bulletPoints} variant="bullet-points"/>
-              </Accordion>
-            }
+          <Accordion isExpandable defaultExpandedSections={[0, 1, 2]} isCompact level={4}>
+            <SummaryItem isLoading={false} title="One Sentence Summary" content={props.oneSentenceSummary} sentiment={props.clientSentiment} variant="one-sentence-summary"/>
+            <SummaryItem isLoading={false} title="Action Items" content={props.actionItems} variant="action-items"/>
+            <SummaryItem isLoading={false} title="Bullet Points" content={props.bulletPoints} variant="bullet-points"/>
+          </Accordion>
           </Grid>
         </TabPanel>
         <TabPanel item={TRANSACTION_DATA} key={TRANSACTION_DATA + "_tab_key"}>
