@@ -147,7 +147,7 @@ class App {
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
         <ToastProvider placementProps={placementProps} zIndex={1}>
           <div id="ep-summary-frame">
-            { displayMacroRecommendations && !displayMacroRecommendations &&
+            { displayMacroRecommendations &&
               <Grid>
                 <Row>
                   <Col>
