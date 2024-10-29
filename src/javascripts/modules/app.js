@@ -147,6 +147,13 @@ class App {
       <ThemeProvider theme={{ ...DEFAULT_THEME }}>
         <ToastProvider placementProps={placementProps} zIndex={1}>
           <div id="ep-summary-frame">
+            { fileNumber && 
+              <Grid style={{paddingTop: 8, paddingBottom: 8}}>
+                <Anchor isExternal externalIconLabel={"Link to Verse Transaction"} target="_blank" href={"https://verse.endpointclosing.com/transaction/" + fileNumber}>
+                  {fileNumber + " in Verse"}
+                </Anchor>
+              </Grid>
+            }
             { displayMacroRecommendations &&
               <Grid>
                 <Row>
@@ -154,13 +161,6 @@ class App {
                     <MacroRecommendations macroRecommendations={macroRecommendations}></MacroRecommendations>
                   </Col>
                 </Row>
-              </Grid>
-            }
-            { fileNumber && 
-              <Grid style={{paddingTop: 8, paddingBottom: 8}}>
-                <Anchor isExternal externalIconLabel={"Link to Verse Transaction"} target="_blank" href={"https://verse.endpointclosing.com/transaction/" + fileNumber}>
-                  {fileNumber + " in Verse"}
-                </Anchor>
               </Grid>
             }
             <TabsWrapper oneSentenceSummary={oneSentenceSummary} bulletPoints={bulletPoints} 
