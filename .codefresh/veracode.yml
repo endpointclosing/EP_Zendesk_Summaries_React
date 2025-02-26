@@ -7,7 +7,7 @@ steps:
   main_clone:
     title: Cloning repository
     type: git-clone
-    repo: "endpointclosing/endpoint-eng-python"
+    repo: "endpointclosing/EP_Zendesk_Summaries_React"
     revision: "main"
     git: github
     stage: clone
