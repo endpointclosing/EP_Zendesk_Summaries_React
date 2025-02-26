@@ -60,7 +60,7 @@ export function generateCustomTicketKey (str) {
 }
 
 export const parseValue = (key, value) => {
-  let parsedValue = value ? value : "";
+  let parsedValue = value ? String(value) : "";
   parsedValue = parsedValue.replaceAll("_", " ");
   const lowercaseKey = key.toLowerCase();
   if (lowercaseKey.includes("price") || lowercaseKey.includes("amount") || lowercaseKey.includes("fee") || lowercaseKey.includes("credits") || lowercaseKey.includes("deposit")) {
