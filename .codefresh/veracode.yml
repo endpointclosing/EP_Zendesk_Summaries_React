@@ -1,0 +1,49 @@
+version: "1.0"
+stages:
+  - clone
+  - scan
+
+steps:
+  main_clone:
+    title: Cloning repository
+    type: git-clone
+    repo: "endpointclosing/EP_Zendesk_Summaries_React"
+    revision: "main"
+    git: github
+    stage: clone
+
+  # Package Lambda Source into Zip Archive for Veracode
+  package:
+    title: Package Lambda for Veracode
+    type: freestyle
+    image: python:3.12
+    working_directory: "${{main_clone}}"
+    stage: scan
+    commands:
+      # - apt update
+      # - apt install zip -y
+      - echo "Package source files into zip archive to send to Veracode"
+      - zip -r $VERACODE_SOURCEFILE.zip packages/*
+
+  # Veracode Pipeline Scan
+  veracode_pipeline_scan:
+    title: Veracode Pipeline Scan Custom Step
+    type: endpointclosing/veracode-pipeline-scan
+    stage: scan
+    arguments:
+      veracode_api_key_id: "${{VERACODE_API_KEY_ID}}"
+      veracode_api_key_secret: "${{VERACODE_API_KEY_SECRET}}"
+      veracode_archive_path: "${VERACODE_ARCHIVE_PATH}"
+      veracode_fail_severity: "${{VERACODE_FAIL_SEVERITY}}"
+
+  # Veracode Full Scan
+  veracode_full_scan:
+    title: Veracode Full Scan Custom Step
+    type: endpointclosing/veracode-full-scan
+    stage: scan
+    arguments:
+      cf_revision: "${{CF_REVISION}}"
+      veracode_api_key_id: "${{VERACODE_API_KEY_ID}}"
+      veracode_api_key_secret: "${{VERACODE_API_KEY_SECRET}}"
+      veracode_app_name: "${{VERACODE_APP_NAME}}"
+      veracode_archive_path: "${VERACODE_ARCHIVE_PATH}"
